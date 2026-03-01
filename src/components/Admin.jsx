@@ -415,8 +415,10 @@ const GalleryTab = () => {
       await addDoc(collection(db, 'galleryImages'), { url, storagePath: path, createdAt: serverTimestamp() });
       if (fileInputRef.current) fileInputRef.current.value = '';
       await fetchImages();
-    } catch {
-      setError('Upload failed. Make sure Firebase Storage is enabled in your Firebase Console.');
+    } catch (err) {
+      console.error('Gallery upload error:', err);
+      const msg = err?.message || err?.code || 'Unknown error';
+      setError(`Upload failed: ${msg}. Make sure Firebase Storage is enabled in your Firebase Console.`);
     } finally {
       setUploading(false);
     }
