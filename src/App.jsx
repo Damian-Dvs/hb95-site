@@ -32,7 +32,6 @@ function AppInner() {
                 <div className="absolute inset-0 bg-black/55" />
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10">
-                  <img src="/HB95.png" alt="HB95" className="h-24 md:h-32 mb-6 drop-shadow-2xl" />
                   <h1 className="text-white text-4xl md:text-6xl font-black tracking-tight drop-shadow-lg">
                     Harley Bebb <span className="text-teal-400">#95</span>
                   </h1>
