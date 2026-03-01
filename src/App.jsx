@@ -10,6 +10,7 @@ import Shop from './components/Shop';
 import BlogPreview from './components/BlogPreview';
 import BlogPage from './components/BlogPage';
 import Admin from './components/Admin';
+import UpcomingRaces from './components/UpcomingRaces';
 
 function AppInner() {
   const location = useLocation();
@@ -54,6 +55,7 @@ function AppInner() {
 
               <About />
               <Results />
+              <UpcomingRaces />
               <BlogPreview /> {/* Only latest 3 posts here */}
               <Gallery />
               <Updates />
