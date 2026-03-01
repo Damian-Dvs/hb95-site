@@ -26,17 +26,30 @@ function AppInner() {
             <>
               <section
                 id="hero"
-                className="h-screen relative bg-cover bg-center bg-no-repeat text-black"
+                className="h-screen relative bg-cover bg-center bg-no-repeat"
                 style={{ backgroundImage: "url('/Hero.jpeg')" }}
               >
-                <div className="absolute inset-0 bg-black bg-opacity-20" />
+                <div className="absolute inset-0 bg-black/55" />
 
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center z-10">
-                  <a href="#results">
-                    <button className="bg-teal-600 text-black px-6 py-3 font-semibold rounded shadow-lg hover:scale-105 transition">
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10">
+                  <img src="/HB95.png" alt="HB95" className="h-24 md:h-32 mb-6 drop-shadow-2xl" />
+                  <h1 className="text-white text-4xl md:text-6xl font-black tracking-tight drop-shadow-lg">
+                    Harley Bebb <span className="text-teal-400">#95</span>
+                  </h1>
+                  <p className="text-white/70 mt-3 text-sm md:text-base font-medium tracking-widest uppercase">
+                    British Go-Karting
+                  </p>
+                  <a href="#results" className="mt-10">
+                    <button className="bg-teal-600 text-white px-8 py-3 rounded-full font-semibold text-sm hover:bg-teal-500 transition shadow-lg">
                       View Race Results
                     </button>
                   </a>
+                </div>
+
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40 animate-bounce">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </div>
               </section>
 

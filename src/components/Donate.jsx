@@ -2,40 +2,31 @@ import React from 'react';
 
 const Donate = () => {
   return (
-    <section id="donate" className="py-16 px-4 bg-gray-100 text-center">
-      <div className="inline-block bg-teal-600 text-white font-semibold px-6 py-2 rounded-full shadow-md mb-6">
-        Donations — Coming Soon!
-      </div>
-
-      <h2 className="text-3xl font-bold mb-4 text-teal-900">Support HB95</h2>
-
-      <div className="max-w-3xl mx-auto">
-        <p className="text-lg mb-8 text-gray-700">
-          Karting is an amazing sport — but it's also expensive! Every contribution
-          helps Harley get closer to the podium. Donations will be live very soon.
+    <section id="donate" className="bg-white py-20 px-6">
+      <div className="max-w-xl mx-auto text-center">
+        <p className="text-teal-600 text-xs font-bold uppercase tracking-widest mb-3">Support the Journey</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Donate</h2>
+        <p className="text-gray-500 leading-relaxed mb-10 max-w-sm mx-auto">
+          Karting is an incredible sport — but also an expensive one. Every contribution helps Harley get closer to the podium.
         </p>
 
-        <div className="grid sm:grid-cols-3 gap-6 mb-8">
-          {['£5', '£10', '£20'].map((amount) => (
-            <button
-              key={amount}
-              disabled
-              className="bg-teal-200 text-teal-700 px-6 py-4 rounded shadow font-semibold text-lg cursor-not-allowed"
-            >
-              {amount}
-            </button>
-          ))}
+        <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8">
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-5">Choose an amount</p>
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {['£5', '£10', '£20'].map(amount => (
+              <div
+                key={amount}
+                className="bg-white border-2 border-gray-200 rounded-xl py-4 text-center font-bold text-lg text-gray-300 cursor-not-allowed select-none"
+              >
+                {amount}
+              </div>
+            ))}
+          </div>
+          <div className="bg-teal-50 text-teal-400 font-semibold py-3 rounded-full text-sm cursor-not-allowed select-none">
+            Donations Opening Soon
+          </div>
+          <p className="text-xs text-gray-400 mt-5">Custom amounts will also be available. Thank you for your support!</p>
         </div>
-
-        <p className="text-gray-500 mb-4 text-sm">Custom amounts will also be available</p>
-
-        <div className="inline-block bg-gray-200 text-gray-500 font-semibold px-8 py-3 rounded-full cursor-not-allowed select-none">
-          Donate — Opening Soon
-        </div>
-
-        <p className="mt-8 text-sm text-gray-500 italic">
-          Thank you for your support — we can't wait to get this live!
-        </p>
       </div>
     </section>
   );
