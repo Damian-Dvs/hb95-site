@@ -16,14 +16,20 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/pwa-icon-192.png',
+            src: '/HB95.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/pwa-icon-512.png',
+            src: '/HB95.png',
             sizes: '512x512',
             type: 'image/png'
+          },
+          {
+            src: '/HB95.png',
+            sizes: '1024x1024',
+            type: 'image/png',
+            purpose: 'any maskable'
           }
         ]
       }

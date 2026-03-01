@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import AddToHomePrompt from './components/AddToHomePrompt';
 import Navbar from './components/Navbar';
 import About from './components/About';
@@ -10,11 +10,14 @@ import Donate from './components/Donate';
 import Shop from './components/Shop';
 import BlogPreview from './components/BlogPreview';
 import BlogPage from './components/BlogPage';
+import Admin from './components/Admin';
 
-function App() {
+function AppInner() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith('/admin');
   return (
-    <Router>
-      <Navbar />
+    <>
+      {!isAdmin && <Navbar />}
       <Routes>
 
         {/* Home Route */}
@@ -54,7 +57,18 @@ function App() {
         {/* Full Blog Page Route */}
         <Route path="/blog" element={<BlogPage />} />
 
+        {/* Admin Portal — not linked publicly */}
+        <Route path="/admin" element={<Admin />} />
+
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppInner />
     </Router>
   );
 }

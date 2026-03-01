@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { client } from "../lib/sanity";
-import { PortableText } from "@portabletext/react";
+import { db } from "../lib/firebase";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 
 const BlogPage = () => {
   const [posts, setPosts] = useState([]);
   const [expanded, setExpanded] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const query = `*[_type == "post"] | order(publishedAt desc){
-        _id,
-        title,
-        slug,
-        publishedAt,
-        excerpt,
-        body
-      }`;
-      const result = await client.fetch(query);
-      setPosts(result);
+      try {
+        const q = query(collection(db, 'blogPosts'), orderBy('publishedAt', 'desc'));
+        const snapshot = await getDocs(q);
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPosts(result);
+      } catch (err) {
+        setError('Could not load blog posts. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchPosts();
@@ -29,13 +32,12 @@ const BlogPage = () => {
     <section className="pt-32 pb-16 bg-white min-h-screen">
       <div className="max-w-4xl mx-auto px-4">
 
-        {/* ✅ Visible and spaced Back Button */}
         <div className="mb-6">
           <button
             onClick={() => navigate("/")}
             className="text-teal-600 hover:text-teal-800 text-sm font-semibold underline"
           >
-            ← Back to Home
+            Back to Home
           </button>
         </div>
 
@@ -43,9 +45,27 @@ const BlogPage = () => {
           Blog
         </h2>
 
-        {posts.map((post) => (
+        {loading && (
+          <div className="space-y-6 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="bg-gray-100 rounded-2xl h-28" />
+            ))}
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-6 py-4 text-center">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && posts.length === 0 && (
+          <p className="text-center text-gray-500 py-8">No posts yet — check back soon!</p>
+        )}
+
+        {!loading && !error && posts.map((post) => (
           <div
-            key={post._id}
+            key={post.id}
             className="bg-gray-50 p-6 rounded-2xl shadow-md mb-8"
           >
             <h3 className="text-2xl font-bold text-black mb-2">{post.title}</h3>
@@ -54,22 +74,24 @@ const BlogPage = () => {
             </p>
 
             <div className="text-gray-800">
-              {expanded === post._id ? (
+              {expanded === post.id ? (
                 <>
-                  <PortableText value={post.body} />
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown>{post.body}</ReactMarkdown>
+                  </div>
                   <button
                     onClick={() => setExpanded(null)}
                     className="text-teal-600 mt-4 underline hover:text-teal-800"
                   >
-                    Show Less ▲
+                    Show Less
                   </button>
                 </>
               ) : (
                 <button
-                  onClick={() => setExpanded(post._id)}
+                  onClick={() => setExpanded(post.id)}
                   className="text-teal-600 font-semibold hover:text-teal-800"
                 >
-                  ▸ Read More
+                  Read More
                 </button>
               )}
             </div>
