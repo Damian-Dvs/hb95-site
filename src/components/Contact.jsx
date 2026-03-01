@@ -1,22 +1,34 @@
 function Contact() {
-    return (
-      <section id="contact" className="bg-black text-white py-16 px-6 md:px-20">
-        <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Get In Touch</h2>
-          <p className="mb-4">For sponsorships, race invites or messages:</p>
-          <p className="text-lg font-medium">
-            📧 <a href="mailto:team@hb95.com" className="underline">team@hb95.com</a>
-          </p>
-          <div className="flex justify-center mt-6 space-x-6 text-lg">
-            <a href="https://www.facebook.com/people/HarleyBebb95/61571713146844/" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400">Facebook</a>
+  return (
+    <section id="contact" className="bg-teal-900 py-16 px-6">
+      <div className="max-w-xl mx-auto text-center">
+        <p className="text-teal-400 text-xs font-bold uppercase tracking-widest mb-3">Say Hello</p>
+        <h2 className="text-3xl font-bold text-white mb-4">Get In Touch</h2>
+        <p className="text-teal-200 text-sm mb-8">For sponsorships, race invites or general messages:</p>
+
+        <a
+          href="mailto:team@hb95.com"
+          className="inline-block bg-white text-teal-900 font-bold px-7 py-3 rounded-full text-sm hover:bg-teal-50 transition shadow-md"
+        >
+          team@hb95.com
+        </a>
+
+        <div className="border-t border-teal-800 mt-10 pt-8">
+          <div className="flex justify-center gap-6 mb-6">
+            <a
+              href="https://www.facebook.com/people/HarleyBebb95/61571713146844/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-teal-300 hover:text-white text-sm font-medium transition"
+            >
+              Facebook
+            </a>
           </div>
-          <div className="flex justify-center mt-6 space-x-6 text-sm text-teal-600">
-            <p className="mb-4"> Created by DDesigns </p>
-          </div>
+          <p className="text-teal-700 text-xs">Created by DDesigns</p>
         </div>
-      </section>
-    );
-  }
-  
-  export default Contact;
-  
+      </div>
+    </section>
+  );
+}
+
+export default Contact;

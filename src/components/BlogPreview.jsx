@@ -4,6 +4,15 @@ import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 
+const ChevronIcon = ({ open }) => (
+  <svg
+    className={`w-4 h-4 text-gray-400 transition-transform duration-200 shrink-0 ${open ? 'rotate-180' : ''}`}
+    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+);
+
 const BlogPreview = () => {
   const [posts, setPosts] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
@@ -16,85 +25,84 @@ const BlogPreview = () => {
       try {
         const q = query(collection(db, 'blogPosts'), orderBy('publishedAt', 'desc'), limit(3));
         const snapshot = await getDocs(q);
-        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPosts(result);
-      } catch (err) {
-        setError('Could not load blog posts. Please try again later.');
+        setPosts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch {
+        setError('Could not load blog posts.');
       } finally {
         setLoading(false);
       }
     };
-
     fetchPosts();
   }, []);
 
-  const toggleExpand = (id) => {
-    setExpandedId(prev => (prev === id ? null : id));
-  };
-
   return (
-    <section className="py-16 bg-white" id="blog-preview">
-      <div className="max-w-4xl mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center text-black mb-12">
-          Latest Blog Posts
-        </h2>
+    <section className="bg-white py-20 px-6" id="blog">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-10">
+          <p className="text-teal-600 text-xs font-bold uppercase tracking-widest mb-3">From the Track</p>
+          <h2 className="text-3xl font-bold text-gray-900">Latest Posts</h2>
+        </div>
 
         {loading && (
-          <div className="space-y-4 animate-pulse">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="bg-gray-100 rounded-xl h-24" />
-            ))}
+          <div className="space-y-3 animate-pulse">
+            {[1, 2, 3].map(n => <div key={n} className="h-16 bg-gray-100 rounded-2xl" />)}
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-6 py-4 text-center">
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-4 text-sm text-center">
             {error}
           </div>
         )}
 
         {!loading && !error && posts.length === 0 && (
-          <p className="text-center text-gray-500 py-8">No posts yet — check back soon!</p>
+          <p className="text-center text-gray-400 py-8">No posts yet — check back soon!</p>
         )}
 
-        {!loading && !error && posts.map((post) => (
-          <div key={post.id} className="bg-gray-50 p-6 rounded-xl shadow-md mb-6">
-            <h3 className="text-xl font-bold text-black mb-2">{post.title}</h3>
-            <p className="text-gray-500 text-sm mb-2">
-              {new Date(post.publishedAt).toLocaleDateString("en-GB")}
-            </p>
-            {expandedId === post.id ? (
-              <>
-                <div className="prose prose-sm max-w-none text-gray-800">
-                  <ReactMarkdown>{post.body}</ReactMarkdown>
-                </div>
+        {!loading && !error && posts.length > 0 && (
+          <div className="space-y-3">
+            {posts.map(post => (
+              <div key={post.id} className="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
                 <button
-                  className="text-teal-600 mt-3 underline hover:text-teal-800"
-                  onClick={() => toggleExpand(post.id)}
+                  onClick={() => setExpandedId(prev => prev === post.id ? null : post.id)}
+                  className="w-full text-left px-5 py-4 hover:bg-gray-100 transition"
                 >
-                  Show Less
+                  <div className="flex items-center gap-3">
+                    <span className="bg-teal-600 text-white text-xs font-bold px-2.5 py-1 rounded shrink-0">
+                      {new Date(post.publishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                    </span>
+                    <p className="font-semibold text-gray-900 flex-1 min-w-0 truncate">{post.title}</p>
+                    <ChevronIcon open={expandedId === post.id} />
+                  </div>
+                  {expandedId !== post.id && post.excerpt && (
+                    <p className="text-gray-500 text-sm mt-2 pl-0 line-clamp-1">{post.excerpt}</p>
+                  )}
                 </button>
-              </>
-            ) : (
-              <>
-                <p className="text-gray-700 mb-2">{post.excerpt}</p>
-                <button
-                  className="text-teal-600 font-semibold hover:text-teal-800"
-                  onClick={() => toggleExpand(post.id)}
-                >
-                  Read More
-                </button>
-              </>
-            )}
+
+                {expandedId === post.id && (
+                  <div className="px-5 pb-5 border-t border-gray-100">
+                    <div className="prose prose-sm max-w-none text-gray-700 mt-4">
+                      <ReactMarkdown>{post.body}</ReactMarkdown>
+                    </div>
+                    <button
+                      onClick={() => setExpandedId(null)}
+                      className="mt-4 text-teal-600 text-sm font-semibold hover:text-teal-800"
+                    >
+                      Show Less
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
+        )}
 
         <div className="text-center mt-8">
           <button
-            className="bg-teal-600 text-white px-6 py-3 rounded shadow hover:bg-teal-700"
-            onClick={() => navigate("/blog")}
+            onClick={() => navigate('/blog')}
+            className="bg-teal-600 text-white px-7 py-3 rounded-full font-semibold text-sm hover:bg-teal-700 transition shadow-sm"
           >
-            View All Blog Posts
+            View All Posts
           </button>
         </div>
       </div>
