@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
+const isWin = (pos) => ['p1', '1st', '1'].includes((pos || '').toLowerCase().replace(/\s/g, ''));
+const isPodium = (pos) => ['p1', 'p2', 'p3', '1st', '2nd', '3rd', '1', '2', '3'].includes((pos || '').toLowerCase().replace(/\s/g, ''));
+
 const positionStyle = (pos) => {
   const p = (pos || '').toLowerCase().replace(/\s/g, '');
   if (['p1', '1st', '1'].includes(p)) return 'bg-amber-100 text-amber-800 border border-amber-300';
@@ -22,7 +25,6 @@ const ChevronIcon = ({ open }) => (
 
 const EventCard = ({ event, defaultOpen }) => {
   const [open, setOpen] = useState(defaultOpen);
-
   const finalSession = event.sessions?.find(s => s.type === 'Final');
   const hasNotes = event.sessions?.some(s => s.notes);
 
@@ -34,7 +36,7 @@ const EventCard = ({ event, defaultOpen }) => {
       >
         <div className="flex items-center gap-3 flex-wrap">
           <span className="bg-teal-600 text-white text-xs font-bold px-2.5 py-1 rounded shrink-0">
-            {new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+            {new Date(event.date + 'T12:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
           </span>
           <span className="font-semibold text-gray-900">{event.track}</span>
           {event.championship && (
@@ -107,11 +109,34 @@ const Results = () => {
     fetchEvents();
   }, []);
 
+  const totalEvents = events.length;
+  const wins = events.filter(ev => ev.sessions?.some(s => s.type === 'Final' && isWin(s.position))).length;
+  const podiums = events.filter(ev => ev.sessions?.some(s => s.type === 'Final' && isPodium(s.position))).length;
+
   return (
-    <section id="results" className="bg-gray-100 py-16 px-6 md:px-20 text-black">
+    <section id="results" className="bg-gray-50 py-20 px-6">
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-bold mb-2 text-center">Race Results</h2>
-        <p className="text-center text-gray-500 text-sm mb-8">
+        <div className="text-center mb-10">
+          <p className="text-teal-600 text-xs font-bold uppercase tracking-widest mb-3">Season Stats</p>
+          <h2 className="text-3xl font-bold text-gray-900">Race Results</h2>
+        </div>
+
+        {!loading && !error && events.length > 0 && (
+          <div className="grid grid-cols-3 gap-3 mb-8">
+            {[
+              { label: 'Races', value: totalEvents },
+              { label: 'Wins', value: wins },
+              { label: 'Podiums', value: podiums },
+            ].map(stat => (
+              <div key={stat.label} className="bg-white rounded-xl text-center py-5 shadow-sm border border-gray-100">
+                <p className="text-3xl font-black text-teal-600">{stat.value}</p>
+                <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p className="text-center text-gray-400 text-sm mb-6">
           Tap any event to see the full session breakdown.
         </p>
 
@@ -130,7 +155,7 @@ const Results = () => {
         )}
 
         {!loading && !error && events.length === 0 && (
-          <p className="text-gray-500 text-center py-8">No race results yet — check back soon!</p>
+          <p className="text-gray-400 text-center py-8">No race results yet — check back soon!</p>
         )}
 
         {!loading && !error && events.length > 0 && (
