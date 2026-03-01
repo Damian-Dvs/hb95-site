@@ -14,8 +14,8 @@ function Navbar() {
 
   return (
     <nav className="fixed top-0 w-full bg-teal-900 z-50 shadow-lg">
-      <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-        <img src="/HB95.png" alt="HB95" className="h-11 w-auto" />
+      <div className="max-w-6xl mx-auto px-5 h-[4.5rem] flex items-center justify-between">
+        <img src="/HB95.png" alt="HB95" className="h-14 w-auto" />
 
         {/* Desktop */}
         <ul className="hidden md:flex items-center gap-7">
