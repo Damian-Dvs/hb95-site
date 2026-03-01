@@ -6,20 +6,28 @@ import { useNavigate } from "react-router-dom";
 const BlogPreview = () => {
   const [posts, setPosts] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const query = `*[_type == "post"] | order(publishedAt desc)[0...3]{
-        _id,
-        title,
-        slug,
-        publishedAt,
-        excerpt,
-        body
-      }`;
-      const result = await client.fetch(query);
-      setPosts(result);
+      try {
+        const query = `*[_type == "post"] | order(publishedAt desc)[0...3]{
+          _id,
+          title,
+          slug,
+          publishedAt,
+          excerpt,
+          body
+        }`;
+        const result = await client.fetch(query);
+        setPosts(result);
+      } catch (err) {
+        setError('Could not load blog posts. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchPosts();
@@ -36,7 +44,25 @@ const BlogPreview = () => {
           Latest Blog Posts
         </h2>
 
-        {posts.map((post) => (
+        {loading && (
+          <div className="space-y-4 animate-pulse">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="bg-gray-100 rounded-xl h-24" />
+            ))}
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-6 py-4 text-center">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && posts.length === 0 && (
+          <p className="text-center text-gray-500 py-8">No posts yet — check back soon!</p>
+        )}
+
+        {!loading && !error && posts.map((post) => (
           <div key={post._id} className="bg-gray-50 p-6 rounded-xl shadow-md mb-6">
             <h3 className="text-xl font-bold text-black mb-2">{post.title}</h3>
             <p className="text-gray-500 text-sm mb-2">
@@ -49,7 +75,7 @@ const BlogPreview = () => {
                   className="text-teal-600 mt-3 underline hover:text-teal-800"
                   onClick={() => toggleExpand(post._id)}
                 >
-                  ▲ Show Less
+                  Show Less
                 </button>
               </>
             ) : (
@@ -59,7 +85,7 @@ const BlogPreview = () => {
                   className="text-teal-600 font-semibold hover:text-teal-800"
                   onClick={() => toggleExpand(post._id)}
                 >
-                  ▸ Read More
+                  Read More
                 </button>
               </>
             )}

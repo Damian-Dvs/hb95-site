@@ -18,7 +18,7 @@ function Navbar() {
         </div>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-6 text-lg">
+        <ul className="hidden md:flex space-x-6 text-lg text-white">
           <li><a href="#about" className="hover:text-teal-500">About</a></li>
           <li><a href="#results" className="hover:text-teal-500">Results</a></li>
           <li><a href="#gallery" className="hover:text-teal-500">Gallery</a></li>
@@ -49,7 +49,7 @@ function Navbar() {
           <li><a href="#about" onClick={toggleMenu} className="block hover:text-teal-500">About</a></li>
           <li><a href="#results" onClick={toggleMenu} className="block hover:text-teal-500">Results</a></li>
           <li><a href="#gallery" onClick={toggleMenu} className="block hover:text-teal-500">Gallery</a></li>
-          <li><a href="#donatey" onClick={toggleMenu} className="block hover:text-teal-500">Donate</a></li>
+          <li><a href="#donate" onClick={toggleMenu} className="block hover:text-teal-500">Donate</a></li>
           <li><a href="#shop" onClick={toggleMenu} className="block hover:text-teal-500">Merch</a></li>
           <li><a href="#contact" onClick={toggleMenu} className="block hover:text-teal-500">Contact</a></li>
         </ul>

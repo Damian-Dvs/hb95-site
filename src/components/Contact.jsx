@@ -8,8 +8,7 @@ function Contact() {
             📧 <a href="mailto:team@hb95.com" className="underline">team@hb95.com</a>
           </p>
           <div className="flex justify-center mt-6 space-x-6 text-lg">
-            <a href="https://instagram.com" target="_blank" className="hover:text-teal-400">Instagram</a>
-            <a href="https://facebook.com" target="_blank" className="hover:text-teal-400">Facebook</a>
+            <a href="https://www.facebook.com/people/HarleyBebb95/61571713146844/" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400">Facebook</a>
           </div>
           <div className="flex justify-center mt-6 space-x-6 text-sm text-teal-600">
             <p className="mb-4"> Created by DDesigns </p>
