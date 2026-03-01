@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { auth, db } from '../lib/firebase';
 import {
   signInWithEmailAndPassword,
@@ -370,14 +370,17 @@ const BlogTab = () => {
   );
 };
 
-// ─── Gallery Tab (URL-based, no Firebase Storage needed) ──────────────────────
+// ─── Gallery Tab (Cloudinary upload — free, no credit card, UK accessible) ────
+const CLOUD_NAME   = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
 const GalleryTab = () => {
-  const [images, setImages] = useState([]);
+  const [images, setImages]   = useState([]);
   const [loading, setLoading] = useState(true);
-  const [urlInput, setUrlInput] = useState('');
-  const [previewError, setPreviewError] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress]  = useState(0);
+  const [error, setError]     = useState('');
+  const fileInputRef = useRef(null);
 
   const fetchImages = async () => {
     setLoading(true);
@@ -387,19 +390,39 @@ const GalleryTab = () => {
   };
   useEffect(() => { fetchImages(); }, []);
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    const trimmed = urlInput.trim();
-    if (!trimmed) return;
-    if (previewError) { setError('That URL does not appear to be a valid image.'); return; }
-    setError(''); setSaving(true);
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!CLOUD_NAME || !UPLOAD_PRESET) {
+      setError('Cloudinary is not set up yet. See the setup instructions below.');
+      return;
+    }
+
+    setError(''); setUploading(true); setProgress(0);
     try {
-      await addDoc(collection(db, 'galleryImages'), { url: trimmed, createdAt: serverTimestamp() });
-      setUrlInput('');
-      setPreviewError(false);
+      const form = new FormData();
+      form.append('file', file);
+      form.append('upload_preset', UPLOAD_PRESET);
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        { method: 'POST', body: form }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `Upload failed (${res.status})`);
+      }
+      const data = await res.json();
+      await addDoc(collection(db, 'galleryImages'), { url: data.secure_url, createdAt: serverTimestamp() });
+      if (fileInputRef.current) fileInputRef.current.value = '';
       await fetchImages();
-    } catch { setError('Failed to save. Please try again.'); }
-    finally { setSaving(false); }
+    } catch (err) {
+      console.error('Gallery upload error:', err);
+      setError(err.message || 'Upload failed. Please try again.');
+    } finally {
+      setUploading(false); setProgress(0);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -408,42 +431,49 @@ const GalleryTab = () => {
     await fetchImages();
   };
 
+  const notConfigured = !CLOUD_NAME || !UPLOAD_PRESET;
+
   return (
     <div>
       <div className={cardCls}>
-        <h3 className="text-base font-bold text-teal-900 mb-1">Add Image</h3>
+        <h3 className="text-base font-bold text-teal-900 mb-1">Upload Image</h3>
         <p className="text-sm text-gray-400 mb-4">
-          Paste any public image URL — from <strong>Imgur</strong>, Google Photos (shared link), or anywhere else.
+          Upload directly from your phone or computer — free via <strong>Cloudinary</strong> (25 GB free, no credit card, works in the UK).
         </p>
         <ErrorBanner msg={error} />
-        <form onSubmit={handleAdd}>
-          <div className="flex gap-2 items-start">
-            <div className="flex-1">
-              <input
-                type="url"
-                placeholder="https://i.imgur.com/example.jpg"
-                value={urlInput}
-                onChange={e => { setUrlInput(e.target.value); setPreviewError(false); setError(''); }}
-                className={inputCls}
-              />
-              {urlInput && !previewError && (
-                <img
-                  src={urlInput}
-                  alt="Preview"
-                  className="mt-2 h-20 w-20 object-cover rounded-lg border border-gray-200"
-                  onError={() => setPreviewError(true)}
-                />
-              )}
-              {urlInput && previewError && (
-                <p className="mt-1.5 text-xs text-red-500">Could not load image — check the URL is correct and publicly accessible.</p>
-              )}
-            </div>
-            <button type="submit" disabled={saving || !urlInput.trim() || previewError}
-              className="bg-teal-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-teal-700 transition disabled:opacity-50 shrink-0">
-              {saving ? '…' : 'Add'}
-            </button>
+
+        {notConfigured ? (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm space-y-2">
+            <p className="font-semibold text-amber-800">One-time Cloudinary setup needed:</p>
+            <ol className="list-decimal list-inside text-amber-700 space-y-1">
+              <li>Go to <strong>cloudinary.com</strong> → sign up free (no card needed)</li>
+              <li>Dashboard → copy your <strong>Cloud Name</strong></li>
+              <li>Settings → Upload → Upload Presets → <strong>Add preset</strong></li>
+              <li>Set signing mode to <strong>Unsigned</strong> → Save → copy the preset name</li>
+              <li>Add to your <strong>.env</strong> file:<br />
+                <code className="bg-amber-100 px-1 rounded text-xs block mt-1">
+                  VITE_CLOUDINARY_CLOUD_NAME=yourcloudname<br />
+                  VITE_CLOUDINARY_UPLOAD_PRESET=yourpresetname
+                </code>
+              </li>
+              <li>Restart the dev server / redeploy</li>
+            </ol>
           </div>
-        </form>
+        ) : (
+          <div className="flex items-center gap-3 flex-wrap">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleUpload}
+              disabled={uploading}
+              className="text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 disabled:opacity-60"
+            />
+            {uploading && (
+              <span className="text-sm text-teal-600 font-medium animate-pulse">Uploading…</span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
@@ -455,13 +485,12 @@ const GalleryTab = () => {
             {[1,2,3].map(n => <div key={n} className="aspect-square bg-gray-100 rounded-xl" />)}
           </div>
         ) : images.length === 0 ? (
-          <p className="text-gray-400 text-sm">No images yet. Add one above.</p>
+          <p className="text-gray-400 text-sm">No images yet. Upload one above.</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {images.map(img => (
               <div key={img.id} className="relative aspect-square group">
                 <img src={img.url} alt="" className="w-full h-full object-cover rounded-xl" />
-                {/* Always visible on mobile, hover on desktop */}
                 <button onClick={() => handleDelete(img.id)}
                   className="absolute top-1.5 right-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center shadow transition sm:opacity-0 sm:group-hover:opacity-100 opacity-100">
                   ×
