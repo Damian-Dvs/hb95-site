@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import AddToHomePrompt from './components/AddToHomePrompt';
 import Navbar from './components/Navbar';
 import About from './components/About';
 import Results from './components/Results';
@@ -41,7 +40,6 @@ function AppInner() {
                 </div>
               </section>
 
-              <AddToHomePrompt />
               <About />
               <Results />
               <BlogPreview /> {/* Only latest 3 posts here */}
