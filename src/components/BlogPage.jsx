@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { client } from "../lib/sanity";
-import { PortableText } from "@portabletext/react";
+import { db } from "../lib/firebase";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 
 const BlogPage = () => {
@@ -13,15 +14,9 @@ const BlogPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const query = `*[_type == "post"] | order(publishedAt desc){
-          _id,
-          title,
-          slug,
-          publishedAt,
-          excerpt,
-          body
-        }`;
-        const result = await client.fetch(query);
+        const q = query(collection(db, 'blogPosts'), orderBy('publishedAt', 'desc'));
+        const snapshot = await getDocs(q);
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPosts(result);
       } catch (err) {
         setError('Could not load blog posts. Please try again later.');
@@ -70,7 +65,7 @@ const BlogPage = () => {
 
         {!loading && !error && posts.map((post) => (
           <div
-            key={post._id}
+            key={post.id}
             className="bg-gray-50 p-6 rounded-2xl shadow-md mb-8"
           >
             <h3 className="text-2xl font-bold text-black mb-2">{post.title}</h3>
@@ -79,9 +74,11 @@ const BlogPage = () => {
             </p>
 
             <div className="text-gray-800">
-              {expanded === post._id ? (
+              {expanded === post.id ? (
                 <>
-                  <PortableText value={post.body} />
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown>{post.body}</ReactMarkdown>
+                  </div>
                   <button
                     onClick={() => setExpanded(null)}
                     className="text-teal-600 mt-4 underline hover:text-teal-800"
@@ -91,7 +88,7 @@ const BlogPage = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => setExpanded(post._id)}
+                  onClick={() => setExpanded(post.id)}
                   className="text-teal-600 font-semibold hover:text-teal-800"
                 >
                   Read More

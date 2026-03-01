@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { client } from "../lib/sanity";
-import { PortableText } from "@portabletext/react";
+import { db } from "../lib/firebase";
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 
 const BlogPreview = () => {
@@ -13,15 +14,9 @@ const BlogPreview = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const query = `*[_type == "post"] | order(publishedAt desc)[0...3]{
-          _id,
-          title,
-          slug,
-          publishedAt,
-          excerpt,
-          body
-        }`;
-        const result = await client.fetch(query);
+        const q = query(collection(db, 'blogPosts'), orderBy('publishedAt', 'desc'), limit(3));
+        const snapshot = await getDocs(q);
+        const result = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPosts(result);
       } catch (err) {
         setError('Could not load blog posts. Please try again later.');
@@ -63,17 +58,19 @@ const BlogPreview = () => {
         )}
 
         {!loading && !error && posts.map((post) => (
-          <div key={post._id} className="bg-gray-50 p-6 rounded-xl shadow-md mb-6">
+          <div key={post.id} className="bg-gray-50 p-6 rounded-xl shadow-md mb-6">
             <h3 className="text-xl font-bold text-black mb-2">{post.title}</h3>
             <p className="text-gray-500 text-sm mb-2">
               {new Date(post.publishedAt).toLocaleDateString("en-GB")}
             </p>
-            {expandedId === post._id ? (
+            {expandedId === post.id ? (
               <>
-                <PortableText value={post.body} />
+                <div className="prose prose-sm max-w-none text-gray-800">
+                  <ReactMarkdown>{post.body}</ReactMarkdown>
+                </div>
                 <button
                   className="text-teal-600 mt-3 underline hover:text-teal-800"
-                  onClick={() => toggleExpand(post._id)}
+                  onClick={() => toggleExpand(post.id)}
                 >
                   Show Less
                 </button>
@@ -83,7 +80,7 @@ const BlogPreview = () => {
                 <p className="text-gray-700 mb-2">{post.excerpt}</p>
                 <button
                   className="text-teal-600 font-semibold hover:text-teal-800"
-                  onClick={() => toggleExpand(post._id)}
+                  onClick={() => toggleExpand(post.id)}
                 >
                   Read More
                 </button>

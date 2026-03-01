@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { client } from '../lib/sanity';
+import { db } from '../lib/firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 const Results = () => {
   const [raceResults, setRaceResults] = useState([]);
@@ -9,13 +10,9 @@ const Results = () => {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const query = `*[_type == "raceResult"] | order(date desc){
-          _id,
-          date,
-          track,
-          position
-        }`;
-        const data = await client.fetch(query);
+        const q = query(collection(db, 'raceResults'), orderBy('date', 'desc'));
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setRaceResults(data);
       } catch (err) {
         setError('Could not load race results. Please try again later.');
@@ -62,8 +59,8 @@ const Results = () => {
               </thead>
               <tbody>
                 {raceResults.map((race) => (
-                  <tr key={race._id} className="bg-white border-b hover:bg-gray-100">
-                    <td className="py-3 px-4">{new Date(race.date).toLocaleDateString()}</td>
+                  <tr key={race.id} className="bg-white border-b hover:bg-gray-100">
+                    <td className="py-3 px-4">{new Date(race.date).toLocaleDateString('en-GB')}</td>
                     <td className="py-3 px-4">{race.track}</td>
                     <td className="py-3 px-4 font-bold">{race.position}</td>
                   </tr>
