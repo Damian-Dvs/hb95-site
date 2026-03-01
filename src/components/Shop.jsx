@@ -18,7 +18,7 @@ const Shop = () => {
             Official HB95 gear is on its way. Drop us an email to be the first to know when the store goes live.
           </p>
           <a
-            href="mailto:team@hb95.com?subject=HB95 Merch - Notify Me"
+            href="mailto:harleybebbracing95@outlook.com?subject=HB95 Merch - Notify Me"
             className="inline-block bg-teal-600 text-white px-7 py-3 rounded-full font-semibold text-sm hover:bg-teal-700 transition"
           >
             Get Notified

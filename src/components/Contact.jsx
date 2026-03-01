@@ -7,10 +7,10 @@ function Contact() {
         <p className="text-teal-200 text-sm mb-8">For sponsorships, race invites or general messages:</p>
 
         <a
-          href="mailto:team@hb95.com"
+          href="mailto:harleybebbracing95@outlook.com"
           className="inline-block bg-white text-teal-900 font-bold px-7 py-3 rounded-full text-sm hover:bg-teal-50 transition shadow-md"
         >
-          team@hb95.com
+          harleybebbracing95@outlook.com
         </a>
 
         <div className="border-t border-teal-800 mt-10 pt-8">
