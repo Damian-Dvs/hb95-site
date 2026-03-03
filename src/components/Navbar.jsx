@@ -13,7 +13,7 @@ function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 w-full bg-teal-900 z-50 shadow-lg">
+    <nav className="fixed top-0 w-full bg-gradient-to-r from-teal-900 via-teal-900 to-teal-800 z-50 shadow-lg">
       <div className="max-w-6xl mx-auto px-5 h-[4.5rem] flex items-center justify-between">
         <img src="/HB95.png" alt="HB95" className="h-14 w-auto" />
 
@@ -23,7 +23,7 @@ function Navbar() {
             <li key={link.label}>
               <a
                 href={link.href}
-                className="text-sm font-medium text-white/80 hover:text-white transition"
+                className="text-sm font-medium text-white/70 hover:text-white transition-colors duration-200 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-teal-400 after:transition-all after:duration-300 hover:after:w-full"
               >
                 {link.label}
               </a>
@@ -47,15 +47,15 @@ function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      {isOpen && (
-        <div className="md:hidden bg-teal-900 border-t border-teal-800 px-5 pb-4">
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="bg-teal-900/95 backdrop-blur-sm border-t border-teal-800 px-5 pb-4">
           <ul className="pt-2 space-y-0.5">
             {NAV_LINKS.map(link => (
               <li key={link.label}>
                 <a
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="block py-3 text-white font-medium text-base hover:text-teal-300 transition border-b border-teal-800 last:border-0"
+                  className="block py-3 text-white font-medium text-base hover:text-teal-300 transition-colors border-b border-teal-800/50 last:border-0"
                 >
                   {link.label}
                 </a>
@@ -63,7 +63,7 @@ function Navbar() {
             ))}
           </ul>
         </div>
-      )}
+      </div>
     </nav>
   );
 }

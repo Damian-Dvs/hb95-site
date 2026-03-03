@@ -38,9 +38,10 @@ function Gallery() {
   return (
     <section id="gallery" className="bg-gray-50 py-20 px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-10">
+        <div className="text-center mb-12">
           <p className="text-teal-600 text-xs font-bold uppercase tracking-widest mb-3">On the Track</p>
-          <h2 className="text-3xl font-bold text-gray-900">Gallery</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900">Gallery</h2>
+          <div className="w-12 h-1 bg-gradient-to-r from-teal-500 to-teal-400 rounded-full mx-auto mt-4" />
         </div>
 
         {loading ? (
@@ -53,12 +54,12 @@ function Gallery() {
               <button
                 key={img.id}
                 onClick={() => setSelectedIndex(i)}
-                className="aspect-square overflow-hidden rounded-2xl shadow-sm bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="aspect-square overflow-hidden rounded-2xl shadow-sm bg-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 group"
               >
                 <img
                   src={img.url}
                   alt={`Gallery image ${i + 1}`}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </button>
             ))}
@@ -69,7 +70,7 @@ function Gallery() {
       {/* Lightbox */}
       {selectedIndex !== null && (
         <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-4"
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-4 backdrop-blur-sm"
           onClick={() => setSelectedIndex(null)}
         >
           {/* Prev */}
@@ -110,7 +111,7 @@ function Gallery() {
           </button>
 
           {/* Counter */}
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/50 text-sm">
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium">
             {selectedIndex + 1} / {images.length}
           </div>
         </div>
