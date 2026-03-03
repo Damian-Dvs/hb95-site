@@ -30,16 +30,20 @@ const UpcomingRaces = () => {
   return (
     <section id="upcoming" className="bg-white py-20 px-6">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10">
+        <div className="text-center mb-12">
           <p className="text-teal-600 text-xs font-bold uppercase tracking-widest mb-3">What's Next</p>
-          <h2 className="text-3xl font-bold text-gray-900">Upcoming Races</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900">Upcoming Races</h2>
+          <div className="w-12 h-1 bg-gradient-to-r from-teal-500 to-teal-400 rounded-full mx-auto mt-4" />
         </div>
 
         <div className="space-y-3">
-          {races.map(race => (
-            <div key={race.id} className="bg-gray-50 rounded-2xl border border-gray-100 px-5 py-4 flex items-center gap-4">
-              <div className="bg-teal-600 text-white rounded-xl px-3 py-2 text-center shrink-0 w-14">
-                <p className="text-xs font-bold uppercase leading-none mb-1">
+          {races.map((race, i) => (
+            <div
+              key={race.id}
+              className="bg-gray-50 rounded-2xl border border-gray-100 px-5 py-4 flex items-center gap-4 hover:shadow-md hover:border-gray-200 transition-all duration-300"
+            >
+              <div className="bg-gradient-to-br from-teal-600 to-teal-500 text-white rounded-xl px-3 py-2.5 text-center shrink-0 w-14 shadow-sm">
+                <p className="text-[10px] font-bold uppercase leading-none mb-1 text-teal-100">
                   {new Date(race.date + 'T12:00:00').toLocaleDateString('en-GB', { month: 'short' })}
                 </p>
                 <p className="text-xl font-black leading-none">
@@ -54,6 +58,11 @@ const UpcomingRaces = () => {
                   </p>
                 )}
               </div>
+              {i === 0 && (
+                <span className="ml-auto shrink-0 text-[10px] font-bold uppercase tracking-wider text-teal-600 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-full">
+                  Next
+                </span>
+              )}
             </div>
           ))}
         </div>

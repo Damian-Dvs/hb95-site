@@ -59,7 +59,8 @@ const Donate = () => {
       <section id="donate" className="bg-white py-20 px-6">
         <div className="max-w-xl mx-auto text-center">
           <p className="text-teal-600 text-xs font-bold uppercase tracking-widest mb-3">Support the Journey</p>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Donate</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Donate</h2>
+          <div className="w-12 h-1 bg-gradient-to-r from-teal-500 to-teal-400 rounded-full mx-auto mt-4 mb-8" />
           <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8 text-sm text-gray-400">
             Donations Opening Soon
           </div>
@@ -72,7 +73,8 @@ const Donate = () => {
     <section id="donate" className="bg-white py-20 px-6">
       <div className="max-w-xl mx-auto text-center">
         <p className="text-teal-600 text-xs font-bold uppercase tracking-widest mb-3">Support the Journey</p>
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Donate</h2>
+        <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Donate</h2>
+        <div className="w-12 h-1 bg-gradient-to-r from-teal-500 to-teal-400 rounded-full mx-auto mt-4 mb-8" />
         <p className="text-gray-500 leading-relaxed mb-10 max-w-sm mx-auto">
           Karting is an incredible sport — but also an expensive one. Every contribution helps Harley get closer to the podium.
         </p>
@@ -85,10 +87,10 @@ const Donate = () => {
               <button
                 key={a}
                 onClick={() => { setSelected(a); setCustom(''); }}
-                className={`rounded-xl py-4 text-center font-bold text-lg border-2 transition
+                className={`rounded-xl py-4 text-center font-bold text-lg border-2 transition-all duration-300
                   ${selected === a
-                    ? 'bg-teal-600 border-teal-600 text-white shadow'
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-teal-400'}`}
+                    ? 'bg-teal-600 border-teal-600 text-white shadow-md'
+                    : 'bg-white border-gray-200 text-gray-700 hover:border-teal-400 hover:shadow-sm'}`}
               >
                 £{a}
               </button>
@@ -104,7 +106,7 @@ const Donate = () => {
               placeholder="Custom amount"
               value={custom}
               onChange={e => { setCustom(e.target.value); setSelected(null); }}
-              className="flex-1 border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:border-teal-400 focus:outline-none"
+              className="flex-1 border-2 border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:border-teal-400 focus:outline-none transition-colors"
             />
           </div>
 
