@@ -1,32 +1,58 @@
 import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const NAV_LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Results', href: '#results' },
+  { label: 'Stats', href: '/stats' },
   { label: 'Gallery', href: '#gallery' },
   { label: 'Donate', href: '#donate' },
-  { label: 'Merch', href: '#shop' },
   { label: 'Contact', href: '#contact' },
 ];
 
+function NavLink({ link, className, onClick }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isRoute = link.href.startsWith('/');
+
+  const handleClick = (e) => {
+    if (isRoute) {
+      e.preventDefault();
+      navigate(link.href);
+    } else if (location.pathname !== '/') {
+      // On a sub-page, go home first then scroll to section
+      e.preventDefault();
+      navigate('/' + link.href);
+    }
+    onClick?.();
+  };
+
+  return (
+    <a href={link.href} onClick={handleClick} className={className}>
+      {link.label}
+    </a>
+  );
+}
+
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <nav className="fixed top-0 w-full bg-gradient-to-r from-teal-900 via-teal-900 to-teal-800 z-50 shadow-lg">
       <div className="max-w-6xl mx-auto px-5 h-[4.5rem] flex items-center justify-between">
-        <img src="/HB95.png" alt="HB95" className="h-14 w-auto" />
+        <button onClick={() => navigate('/')} className="shrink-0">
+          <img src="/HB95.png" alt="HB95" className="h-14 w-auto" />
+        </button>
 
         {/* Desktop */}
         <ul className="hidden md:flex items-center gap-7">
           {NAV_LINKS.map(link => (
             <li key={link.label}>
-              <a
-                href={link.href}
+              <NavLink
+                link={link}
                 className="text-sm font-medium text-white/70 hover:text-white transition-colors duration-200 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-teal-400 after:transition-all after:duration-300 hover:after:w-full"
-              >
-                {link.label}
-              </a>
+              />
             </li>
           ))}
         </ul>
@@ -52,13 +78,11 @@ function Navbar() {
           <ul className="pt-2 space-y-0.5">
             {NAV_LINKS.map(link => (
               <li key={link.label}>
-                <a
-                  href={link.href}
+                <NavLink
+                  link={link}
                   onClick={() => setIsOpen(false)}
                   className="block py-3 text-white font-medium text-base hover:text-teal-300 transition-colors border-b border-teal-800/50 last:border-0"
-                >
-                  {link.label}
-                </a>
+                />
               </li>
             ))}
           </ul>

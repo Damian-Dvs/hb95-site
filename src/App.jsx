@@ -12,6 +12,7 @@ import BlogPreview from './components/BlogPreview';
 import BlogPage from './components/BlogPage';
 import Admin from './components/Admin';
 import UpcomingRaces from './components/UpcomingRaces';
+import StatsPage from './components/StatsPage';
 
 function AppInner() {
   const location = useLocation();
@@ -69,6 +70,9 @@ function AppInner() {
 
         {/* Full Blog Page Route */}
         <Route path="/blog" element={<BlogPage />} />
+
+        {/* Track Stats Dashboard */}
+        <Route path="/stats" element={<StatsPage />} />
 
         {/* Admin Portal — not linked publicly */}
         <Route path="/admin" element={<Admin />} />

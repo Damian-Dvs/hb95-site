@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 const INITIAL_VISIBLE = 5;
 
@@ -108,6 +109,7 @@ const Results = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -156,6 +158,20 @@ const Results = () => {
                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-2">{stat.label}</p>
               </div>
             ))}
+          </div>
+        )}
+
+        {!loading && !error && events.length > 0 && (
+          <div className="text-center mb-8">
+            <button
+              onClick={() => navigate('/stats')}
+              className="group inline-flex items-center gap-2 text-teal-600 hover:text-teal-800 text-sm font-semibold transition-colors"
+            >
+              View Track Stats Dashboard
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
         )}
 
