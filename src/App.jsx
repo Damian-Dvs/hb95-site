@@ -58,10 +58,10 @@ function AppInner() {
               <Results />
               <UpcomingRaces />
               <Gallery />
+              <Updates />
               <BlogPreview />
               <Shop />
               <Donate />
-              <Updates />
               <Contact />
             </>
           }
