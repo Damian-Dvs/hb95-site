@@ -5,8 +5,15 @@ import { useNavigate } from 'react-router-dom';
 
 const INITIAL_VISIBLE = 5;
 
-const isWin = (pos) => ['p1', '1st', '1'].includes((pos || '').toLowerCase().replace(/\s/g, ''));
-const isPodium = (pos) => ['p1', 'p2', 'p3', '1st', '2nd', '3rd', '1', '2', '3'].includes((pos || '').toLowerCase().replace(/\s/g, ''));
+const posToNum = (pos) => {
+  if (!pos) return null;
+  const p = pos.toLowerCase().replace(/\s/g, '');
+  if (['dnf', 'dns', 'dsq'].includes(p)) return null;
+  const m = p.match(/\d+/);
+  return m ? parseInt(m[0], 10) : null;
+};
+const isWin = (pos) => posToNum(pos) === 1;
+const isPodium = (pos) => { const n = posToNum(pos); return n !== null && n <= 3; };
 
 const positionStyle = (pos) => {
   const p = (pos || '').toLowerCase().replace(/\s/g, '');
