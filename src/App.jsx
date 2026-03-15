@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import Navbar from './components/Navbar';
 import About from './components/About';
 import Results from './components/Results';
@@ -58,11 +57,11 @@ function AppInner() {
               <About />
               <Results />
               <UpcomingRaces />
-              <BlogPreview /> {/* Only latest 3 posts here */}
               <Gallery />
-              <Updates />
+              <BlogPreview />
               <Shop />
               <Donate />
+              <Updates />
               <Contact />
             </>
           }
@@ -84,14 +83,9 @@ function AppInner() {
 
 function App() {
   return (
-    <PayPalScriptProvider options={{
-      clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || 'test',
-      currency: 'GBP',
-    }}>
-      <Router>
-        <AppInner />
-      </Router>
-    </PayPalScriptProvider>
+    <Router>
+      <AppInner />
+    </Router>
   );
 }
 
